@@ -1,7 +1,8 @@
 #! /usr/bin/pwsh
 param(
     [Parameter(Mandatory = $false)][string] $Configuration = "Release",
-    [Parameter(Mandatory = $false)][string] $OutputPath = ""
+    [Parameter(Mandatory = $false)][string] $OutputPath = "",
+    [Parameter(Mandatory = $false)][switch] $SkipTests
 )
 
 # These make CI builds faster
@@ -68,10 +69,12 @@ if (($installDotNetSdk -eq $true) -And ($null -eq $env:TF_BUILD)) {
 }
 
 Write-Host "Publishing solution..." -ForegroundColor Green
-& $dotnet publish $solutionFile --output $OutputPath --configuration $Configuration
+& $dotnet publish (Join-Path $solutionPath "src/ApplePayJS") --output $OutputPath --configuration $Configuration
 
-Write-Host "Running tests..." -ForegroundColor Green
-& $dotnet test $solutionFile --output $OutputPath --configuration $Configuration
+if ($SkipTests -eq $false) {
+    Write-Host "Running tests..." -ForegroundColor Green
+    & $dotnet test $solutionFile --output $OutputPath --configuration $Configuration
+}
 
 if ($LASTEXITCODE -ne 0) {
     throw "dotnet publish failed with exit code $LASTEXITCODE"

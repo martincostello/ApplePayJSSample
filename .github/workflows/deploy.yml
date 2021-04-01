@@ -1,0 +1,61 @@
+name: deploy
+
+on:
+  push:
+    branches: [ deploy ]
+  workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: applepaymartincostello-uksouth
+  AZURE_WEBAPP_PACKAGE_PATH: ./artifacts
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_GENERATE_ASPNET_CERTIFICATE: false
+  DOTNET_MULTILEVEL_LOOKUP: 0
+  DOTNET_NOLOGO: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  NUGET_XMLDOC_MODE: skip
+
+jobs:
+  build:
+    name: build
+    runs-on: windows-latest
+
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v1
+
+    - name: Build and publish
+      shell: pwsh
+      run: ./build.ps1 -SkipTests
+
+    - name: Publish artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: webapp
+        path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
+  deploy:
+    name: deploy-production
+    needs: build
+    runs-on: windows-latest
+    environment:
+      name: production
+      url: ${{ steps.deploy_production.outputs.webapp-url }}
+
+    steps:
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v2
+      with:
+        name: webapp
+
+    - name: Deploy to Azure App Service
+      uses: azure/webapps-deploy@v2
+      id: deploy_production
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE  }}
