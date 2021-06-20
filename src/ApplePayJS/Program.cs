@@ -15,6 +15,11 @@ namespace JustEat.ApplePayJS
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults((builder) => builder.UseStartup<Startup>());
+                .ConfigureWebHostDefaults((builder) =>
+                {
+                    builder.ConfigureKestrel((p) => p.AddServerHeader = false)
+                           .UseStartup<Startup>();
+                })
+                .TryConfigureAzureKeyVault();
     }
 }
