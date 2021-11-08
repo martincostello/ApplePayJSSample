@@ -7,6 +7,12 @@
     "MerchantCertificatePassword": "Pa55w0rd!",
     "UsePolyfill": true
   },
+  "AzureKeyVault": {
+    "ClientSecret": "",
+    "ClientId": "",
+    "TenantId": "",
+    "Uri": ""
+  },
   "Logging": {
     "LogLevel": {
       "Default": "Debug",
