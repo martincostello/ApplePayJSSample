@@ -2,7 +2,8 @@
 param(
     [Parameter(Mandatory = $false)][string] $Configuration = "Release",
     [Parameter(Mandatory = $false)][string] $OutputPath = "",
-    [Parameter(Mandatory = $false)][switch] $SkipTests
+    [Parameter(Mandatory = $false)][switch] $SkipTests,
+    [Parameter(Mandatory = $false)][string] $Runtime = ""
 )
 
 # These make CI builds faster
@@ -68,8 +69,16 @@ if (($installDotNetSdk -eq $true) -And ($null -eq $env:TF_BUILD)) {
     $env:PATH = "$env:DOTNET_INSTALL_DIR;$env:PATH"
 }
 
+$additionalArgs = @()
+
+if (![string]::IsNullOrEmpty($Runtime)) {
+    $additionalArgs += "--self-contained"
+    $additionalArgs += "--runtime"
+    $additionalArgs += $Runtime
+}
+
 Write-Host "Publishing solution..." -ForegroundColor Green
-& $dotnet publish (Join-Path $solutionPath "src/ApplePayJS") --output $OutputPath --configuration $Configuration
+& $dotnet publish (Join-Path $solutionPath "src/ApplePayJS") --output $OutputPath --configuration $Configuration $additionalArgs
 
 if ($SkipTests -eq $false) {
     Write-Host "Running tests..." -ForegroundColor Green
