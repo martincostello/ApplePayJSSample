@@ -12,7 +12,7 @@
     <PackageReference Include="MartinCostello.Logging.XUnit" Version="0.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
-    <PackageReference Include="Microsoft.Playwright" Version="1.17.2" />
+    <PackageReference Include="Microsoft.Playwright" Version="1.18.0" />
     <PackageReference Include="Shouldly" Version="4.0.3" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" />
@@ -21,18 +21,4 @@
     <Content Include="applepay-dev.pfx;testsettings.json;xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="localhost-dev.pfx" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
-  <PropertyGroup>
-    <_PlaywrightCLIInstalledCommand Condition=" $([MSBuild]::IsOsPlatform('Windows')) ">where playwright</_PlaywrightCLIInstalledCommand>
-    <_PlaywrightCLIInstalledCommand Condition=" !$([MSBuild]::IsOsPlatform('Windows')) ">type playwright</_PlaywrightCLIInstalledCommand>
-  </PropertyGroup>
-  <Target Name="DownloadBrowserDrivers" AfterTargets="Build">
-    <Exec Command="$(_PlaywrightCLIInstalledCommand)" ConsoleToMsBuild="true" IgnoreExitCode="true" StandardErrorImportance="Normal" StandardOutputImportance="Normal">
-      <Output TaskParameter="ExitCode" PropertyName="_PlaywrightCLIInstalled" />
-    </Exec>
-    <Warning Condition=" $(_PlaywrightCLIInstalled) != 0 AND '$(GITHUB_ACTIONS)' == '' " Text="The Playwright CLI .NET Global Tool is not installed. To install this tool, run the following command: dotnet tool install --global Microsoft.Playwright.CLI" />
-    <Exec Condition=" $(_PlaywrightCLIInstalled) != 0 AND '$(GITHUB_ACTIONS)' != '' " Command="dotnet tool install --global Microsoft.Playwright.CLI" ConsoleToMsBuild="true" StandardOutputImportance="Normal">
-      <Output TaskParameter="ExitCode" PropertyName="_PlaywrightCLIInstalled" />
-    </Exec>
-    <Exec Condition=" $(_PlaywrightCLIInstalled) == 0 " Command="playwright install" WorkingDirectory="$(MSBuildThisFileDirectory)../../" ConsoleToMsBuild="true" StandardOutputImportance="Normal" />
-  </Target>
 </Project>
