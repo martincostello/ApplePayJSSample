@@ -80,9 +80,16 @@ if (![string]::IsNullOrEmpty($Runtime)) {
 Write-Host "Publishing solution..." -ForegroundColor Green
 & $dotnet publish (Join-Path $solutionPath "src/ApplePayJS") --output $OutputPath --configuration $Configuration $additionalArgs
 
+$additionalArgs = @()
+
+if (![string]::IsNullOrEmpty($env:GITHUB_SHA)) {
+    $additionalArgs += "--logger"
+    $additionalArgs += "GitHubActions;report-warnings=false"
+}
+
 if ($SkipTests -eq $false) {
     Write-Host "Running tests..." -ForegroundColor Green
-    & $dotnet test $solutionFile --output $OutputPath --configuration $Configuration
+    & $dotnet test $solutionFile --output $OutputPath --configuration $Configuration $additionalArgs
 }
 
 if ($LASTEXITCODE -ne 0) {
