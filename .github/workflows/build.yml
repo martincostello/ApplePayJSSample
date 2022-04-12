@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [ main ]
 
-env:
-  DOTNET_ROLL_FORWARD: Major # HACK Remove once Playwright supports .NET 6
-
 jobs:
   build:
     name: ${{ matrix.os }}
@@ -22,7 +19,7 @@ jobs:
     steps:
 
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v2
@@ -37,7 +34,7 @@ jobs:
         NUGET_XMLDOC_MODE: skip
 
     - name: Publish screenshots
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: ${{ always() }}
       with:
         name: screenshots
@@ -45,7 +42,7 @@ jobs:
         if-no-files-found: ignore
 
     - name: Publish videos
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: ${{ always() }}
       with:
         name: videos
