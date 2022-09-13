@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 
 env:
+  APPLICATION_URL_PROD: https://applepay.martincostello.com
   AZURE_WEBAPP_NAME: applepaymartincostello
   AZURE_WEBAPP_PACKAGE_PATH: ./artifacts
   DOTNET_CLI_TELEMETRY_OPTOUT: true
@@ -14,7 +15,6 @@ env:
   DOTNET_NOLOGO: true
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   NUGET_XMLDOC_MODE: skip
-  WEBSITE_URL_PROD: https://applepay.martincostello.com
 
 jobs:
   build:
@@ -46,7 +46,7 @@ jobs:
     concurrency: production_environment
     environment:
       name: production
-      url: ${{ env.WEBSITE_URL_PROD }}
+      url: ${{ env.APPLICATION_URL_PROD }}
 
     steps:
 
