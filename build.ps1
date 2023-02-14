@@ -88,7 +88,7 @@ if (![string]::IsNullOrEmpty($env:GITHUB_SHA)) {
 
 if ($SkipTests -eq $false) {
     Write-Host "Running tests..." -ForegroundColor Green
-    & $dotnet test $solutionFile --output $OutputPath --configuration $Configuration $additionalArgs
+    & $dotnet test (Join-Path $solutionPath "tests" "ApplePayJS.Tests" "ApplePayJS.Tests.csproj") --output $OutputPath --configuration $Configuration $additionalArgs
 }
 
 if ($LASTEXITCODE -ne 0) {
