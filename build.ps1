@@ -15,7 +15,6 @@ $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
 $solutionPath = Split-Path $MyInvocation.MyCommand.Definition
-$solutionFile = Join-Path $solutionPath "ApplePayJS.sln"
 $sdkFile = Join-Path $solutionPath "global.json"
 
 $dotnetVersion = (Get-Content $sdkFile | Out-String | ConvertFrom-Json).sdk.version
@@ -77,8 +76,8 @@ if (![string]::IsNullOrEmpty($Runtime)) {
     $additionalArgs += $Runtime
 }
 
-Write-Host "Publishing solution..." -ForegroundColor Green
-& $dotnet publish (Join-Path $solutionPath "src/ApplePayJS") --output $OutputPath --configuration $Configuration $additionalArgs
+Write-Host "Publishing application..." -ForegroundColor Green
+& $dotnet publish (Join-Path $solutionPath "src" "ApplePayJS" "ApplePayJS.csproj") --output $OutputPath --configuration $Configuration $additionalArgs
 
 $additionalArgs = @()
 
