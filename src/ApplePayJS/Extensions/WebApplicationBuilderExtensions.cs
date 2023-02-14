@@ -4,6 +4,7 @@
 namespace JustEat.ApplePayJS;
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Azure.Core;
 using Azure.Identity;
 using Microsoft.Extensions.Configuration;
@@ -21,9 +22,9 @@ internal static class WebApplicationBuilderExtensions
         return builder;
     }
 
-    private static bool TryGetVaultUri(IConfiguration configuration, out Uri? vaultUri)
+    private static bool TryGetVaultUri(IConfiguration configuration, [MaybeNullWhen(false)] out Uri? vaultUri)
     {
-        string vault = configuration["AzureKeyVault:Uri"];
+        string? vault = configuration["AzureKeyVault:Uri"];
 
         if (!string.IsNullOrEmpty(vault) && Uri.TryCreate(vault, UriKind.Absolute, out vaultUri))
         {
@@ -36,9 +37,9 @@ internal static class WebApplicationBuilderExtensions
 
     private static TokenCredential CreateCredential(IConfiguration configuration)
     {
-        string clientId = configuration["AzureKeyVault:ClientId"];
-        string clientSecret = configuration["AzureKeyVault:ClientSecret"];
-        string tenantId = configuration["AzureKeyVault:TenantId"];
+        string? clientId = configuration["AzureKeyVault:ClientId"];
+        string? clientSecret = configuration["AzureKeyVault:ClientSecret"];
+        string? tenantId = configuration["AzureKeyVault:TenantId"];
 
         if (!string.IsNullOrEmpty(clientId) &&
             !string.IsNullOrEmpty(clientSecret) &&
