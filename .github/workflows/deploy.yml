@@ -5,6 +5,9 @@ on:
     branches: [ deploy ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 env:
   APPLICATION_URL_PROD: https://applepay.martincostello.com
   AZURE_WEBAPP_NAME: applepaymartincostello
@@ -44,11 +47,22 @@ jobs:
     needs: build
     runs-on: windows-latest
     concurrency: production_environment
+
     environment:
       name: production
       url: ${{ env.APPLICATION_URL_PROD }}
 
+    permissions:
+      id-token: write
+
     steps:
+
+    - name: Azure log in
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - name: Download artifacts
       uses: actions/download-artifact@v3
@@ -57,7 +71,5 @@ jobs:
 
     - name: Deploy to Azure App Service
       uses: azure/webapps-deploy@v2
-      id: deploy_production
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE  }}
