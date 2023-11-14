@@ -1,6 +1,5 @@
 #! /usr/bin/env pwsh
 param(
-    [Parameter(Mandatory = $false)][string] $Configuration = "Release",
     [Parameter(Mandatory = $false)][string] $OutputPath = "",
     [Parameter(Mandatory = $false)][switch] $SkipTests,
     [Parameter(Mandatory = $false)][string] $Runtime = ""
@@ -68,7 +67,7 @@ if (($installDotNetSdk -eq $true) -And ($null -eq $env:TF_BUILD)) {
     $env:PATH = "$env:DOTNET_INSTALL_DIR;$env:PATH"
 }
 
-$additionalArgs = @()
+$additionalArgs = @("--tl")
 
 if (![string]::IsNullOrEmpty($Runtime)) {
     $additionalArgs += "--self-contained"
@@ -77,9 +76,9 @@ if (![string]::IsNullOrEmpty($Runtime)) {
 }
 
 Write-Host "Publishing application..." -ForegroundColor Green
-& $dotnet publish (Join-Path $solutionPath "src" "ApplePayJS" "ApplePayJS.csproj") --output $OutputPath --configuration $Configuration $additionalArgs
+& $dotnet publish (Join-Path $solutionPath "src" "ApplePayJS" "ApplePayJS.csproj") --output $OutputPath $additionalArgs
 
-$additionalArgs = @()
+$additionalArgs = @("--tl")
 
 if (![string]::IsNullOrEmpty($env:GITHUB_SHA)) {
     $additionalArgs += "--logger"
@@ -88,7 +87,7 @@ if (![string]::IsNullOrEmpty($env:GITHUB_SHA)) {
 
 if ($SkipTests -eq $false) {
     Write-Host "Running tests..." -ForegroundColor Green
-    & $dotnet test (Join-Path $solutionPath "tests" "ApplePayJS.Tests" "ApplePayJS.Tests.csproj") --output $OutputPath --configuration $Configuration $additionalArgs
+    & $dotnet test (Join-Path $solutionPath "tests" "ApplePayJS.Tests" "ApplePayJS.Tests.csproj") --output $OutputPath --configuration "Release" $additionalArgs
 }
 
 if ($LASTEXITCODE -ne 0) {
