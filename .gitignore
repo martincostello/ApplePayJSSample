@@ -21,6 +21,7 @@ project.lock.json
 PublishProfiles
 src/ApplePayJS/*.pfx
 src/ApplePayJS/wwwroot/.well-known/apple-developer-merchantid-domain-association*
+src/ApplePayJS/wwwroot/well-known/apple-developer-merchantid-domain-association*
 src/ApplePayJS/wwwroot/**/*.min.css
 src/ApplePayJS/wwwroot/**/*.min.js
 src/ApplePayJS/wwwroot/ts/*.js
