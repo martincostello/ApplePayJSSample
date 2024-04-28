@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   update-sdk:
-    uses: martincostello/update-dotnet-sdk/.github/workflows/update-dotnet-sdk.yml@b5684309b4d6dd59ee955b150f5632c5f3a59f79 # v3.1.4
+    uses: martincostello/update-dotnet-sdk/.github/workflows/update-dotnet-sdk.yml@caa37bca20d50c57dc0173d77f956751bb1a1d55 # v3.2.1
     with:
       labels: "dependencies,.NET"
       user-email: ${{ vars.UPDATER_COMMIT_USER_EMAIL }}
