@@ -22,6 +22,7 @@
     <PublishSelfContained>true</PublishSelfContained>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(CI)' == 'true' ">
+    <ContainerFamily>noble</ContainerFamily>
     <ContainerImageTags>github-$(GITHUB_RUN_NUMBER)</ContainerImageTags>
     <ContainerImageTags Condition=" '$(GITHUB_HEAD_REF)' == '' ">$(ContainerImageTags);latest</ContainerImageTags>
     <ContainerRepository>$(GITHUB_REPOSITORY)</ContainerRepository>
