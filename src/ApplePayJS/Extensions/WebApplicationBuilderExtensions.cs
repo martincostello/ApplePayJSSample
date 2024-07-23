@@ -5,7 +5,6 @@ namespace JustEat.ApplePayJS;
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Azure.Core;
 using Azure.Identity;
 using Microsoft.Extensions.Configuration;
 
@@ -15,8 +14,7 @@ internal static class WebApplicationBuilderExtensions
     {
         if (TryGetVaultUri(builder.Configuration, out Uri? vaultUri))
         {
-            TokenCredential credential = CreateCredential(builder.Configuration);
-            builder.Configuration.AddAzureKeyVault(vaultUri, credential);
+            builder.Configuration.AddAzureKeyVault(vaultUri, new ManagedIdentityCredential());
         }
 
         return builder;
@@ -33,25 +31,5 @@ internal static class WebApplicationBuilderExtensions
 
         vaultUri = null;
         return false;
-    }
-
-    private static TokenCredential CreateCredential(IConfiguration configuration)
-    {
-        string? clientId = configuration["AzureKeyVault:ClientId"];
-        string? clientSecret = configuration["AzureKeyVault:ClientSecret"];
-        string? tenantId = configuration["AzureKeyVault:TenantId"];
-
-        if (!string.IsNullOrEmpty(clientId) &&
-            !string.IsNullOrEmpty(clientSecret) &&
-            !string.IsNullOrEmpty(tenantId))
-        {
-            // Use explicitly configured Azure Key Vault credentials
-            return new ClientSecretCredential(tenantId, clientId, clientSecret);
-        }
-        else
-        {
-            // Assume Managed Service Identity is configured and available
-            return new ManagedIdentityCredential();
-        }
     }
 }
