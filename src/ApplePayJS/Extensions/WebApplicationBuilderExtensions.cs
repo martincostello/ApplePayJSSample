@@ -14,7 +14,7 @@ internal static class WebApplicationBuilderExtensions
     {
         if (TryGetVaultUri(builder.Configuration, out Uri? vaultUri))
         {
-            builder.Configuration.AddAzureKeyVault(vaultUri, new ManagedIdentityCredential());
+            builder.Configuration.AddAzureKeyVault(vaultUri, new ManagedIdentityCredential(ManagedIdentityId.SystemAssigned));
         }
 
         return builder;
