@@ -4,6 +4,12 @@
 
 This repository contains a sample implementation of [Apple Pay JS](https://developer.apple.com/reference/applepayjs/) using ASP.NET Core 10 written in C# and JavaScript.
 
+> [!NOTE]
+> This repository was originally created by Just Eat at
+> [justeattakeaway/ApplePayJSSample](https://github.com/justeattakeaway/ApplePayJSSample) which was archived in mid-2026.
+>
+> This repository is a fork maintained by the original author.
+
 ## Overview
 
 Apple Pay JS is a way of accepting Apple Pay in websites using Safari in either iOS 10 and macOS for users who have a TouchID compatible device.
