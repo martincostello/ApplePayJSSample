@@ -136,6 +136,7 @@ const justEat = {
 
                 // Get the payment data for use to capture funds from
                 // the encrypted Apple Pay token in your server.
+                // biome-ignore lint/correctness/noUnusedVariables: Sample code to show how to access the token
                 const token = event.payment.token.paymentData;
 
                 // Apply the details from the Apple Pay sheet to the page.
