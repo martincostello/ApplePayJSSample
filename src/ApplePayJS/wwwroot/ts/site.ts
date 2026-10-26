@@ -151,6 +151,7 @@ namespace justEat {
          * @param token - The authorized Apple Pay payment token.
          * @returns The authorization result to return to complete the payment.
          */
+        // biome-ignore lint/correctness/noUnusedFunctionParameters: Sample code to show how to access the token
         private captureFunds(token: ApplePayJS.ApplePayPaymentToken): ApplePayJS.ApplePayPaymentAuthorizationResult {
 
             // Do something with the payment to capture funds and
