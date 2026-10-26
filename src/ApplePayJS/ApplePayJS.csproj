@@ -6,13 +6,13 @@
     <OutputType>Exe</OutputType>
     <PackageId>JustEat.ApplePayJS</PackageId>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/justeattakeaway/ApplePayJSSample</PackageProjectUrl>
-    <PackageReleaseNotes>$(PackageProjectUrl)/releases</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/martincostello/ApplePayJSSample</PackageProjectUrl>
+    <PackageReleaseNotes></PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>applepay</PackageTags>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <RootNamespace>JustEat.ApplePayJS</RootNamespace>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <TypeScriptToolsVersion>latest</TypeScriptToolsVersion>
     <UserSecretsId>JustEat.ApplePayJS</UserSecretsId>
   </PropertyGroup>
