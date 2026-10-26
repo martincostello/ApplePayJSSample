@@ -3,7 +3,7 @@
   "private": true,
   "version": "10.0.0",
   "devDependencies": {
-    "@types/applepayjs": "3.0.4",
+    "@types/applepayjs": "14.0.9",
     "@types/jquery": "3.3.34",
     "bower": "1.8.14",
     "tslint": "6.1.0",
