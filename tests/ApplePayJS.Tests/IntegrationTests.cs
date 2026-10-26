@@ -32,7 +32,7 @@ public class IntegrationTests(ITestOutputHelper outputHelper) : IAsyncLifetime
     public async Task Can_Pay_With_Apple_Pay()
     {
         // Arrange
-        var builder = new HttpRequestInterceptionBuilder()
+        new HttpRequestInterceptionBuilder()
             .Requests()
             .ForPost()
             .ForUrl("https://apple-pay-gateway-cert.apple.com/paymentservices/startSession")
