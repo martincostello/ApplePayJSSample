@@ -1,7 +1,0 @@
-{
-  "name": "justeatapplepayjs",
-  "private": true,
-  "dependencies": {
-    "applepayjs-polyfill": "10.0.0"
-  }
-}
