@@ -20,7 +20,7 @@ if ($OutputPath -eq "") {
 $installDotNetSdk = $false;
 
 if (($null -eq (Get-Command "dotnet" -ErrorAction SilentlyContinue)) -and ($null -eq (Get-Command "dotnet.exe" -ErrorAction SilentlyContinue))) {
-    Write-Host "The .NET SDK is not installed."
+    Write-Output "The .NET SDK is not installed."
     $installDotNetSdk = $true
 }
 else {
@@ -32,7 +32,7 @@ else {
     }
 
     if ($installedDotNetVersion -ne $dotnetVersion) {
-        Write-Host "The required version of the .NET SDK is not installed. Expected $dotnetVersion."
+        Write-Output "The required version of the .NET SDK is not installed. Expected $dotnetVersion."
         $installDotNetSdk = $true
     }
 }
@@ -62,7 +62,16 @@ if (($installDotNetSdk -eq $true) -And ($null -eq $env:TF_BUILD)) {
     $env:PATH = "$env:DOTNET_INSTALL_DIR;$env:PATH"
 }
 
-$additionalArgs = @("--tl")
+$additionalArgs = @()
+
+if (![string]::IsNullOrEmpty($Runtime)) {
+    $additionalArgs += "--self-contained"
+    $additionalArgs += "--runtime"
+    $additionalArgs += $Runtime
+}
+
+Write-Output "Publishing application..." -ForegroundColor Green
+& $dotnet publish (Join-Path $solutionPath "src" "ApplePayJS" "ApplePayJS.csproj") --output $OutputPath $additionalArgs
 
 if (![string]::IsNullOrEmpty($Runtime)) {
     $additionalArgs += "--self-contained"
@@ -76,13 +85,14 @@ Write-Host "Publishing application..." -ForegroundColor Green
 $additionalArgs = @("--tl")
 
 if (![string]::IsNullOrEmpty($env:GITHUB_SHA)) {
-    $additionalArgs += "--logger"
-    $additionalArgs += "GitHubActions;report-warnings=false"
+    $additionalArgs += "--report-github"
+    $additionalArgs += "--report-github-summary-include-passed"
+    $additionalArgs += "false"
 }
 
 if ($SkipTests -eq $false) {
-    Write-Host "Running tests..." -ForegroundColor Green
-    & $dotnet test (Join-Path $solutionPath "tests" "ApplePayJS.Tests" "ApplePayJS.Tests.csproj") --output $OutputPath --configuration "Release" $additionalArgs
+    Write-Output "Running tests..." -ForegroundColor Green
+    & $dotnet test (Join-Path $solutionPath "tests" "ApplePayJS.Tests" "ApplePayJS.Tests.csproj") --configuration "Release" $additionalArgs
 }
 
 if ($LASTEXITCODE -ne 0) {

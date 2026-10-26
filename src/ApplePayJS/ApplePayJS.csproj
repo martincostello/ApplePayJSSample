@@ -7,8 +7,8 @@
     <OutputType>Exe</OutputType>
     <PackageId>JustEat.ApplePayJS</PackageId>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/justeattakeaway/ApplePayJSSample</PackageProjectUrl>
-    <PackageReleaseNotes>$(PackageProjectUrl)/releases</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/martincostello/ApplePayJSSample</PackageProjectUrl>
+    <PackageReleaseNotes></PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>applepay</PackageTags>
     <PreserveCompilationContext>true</PreserveCompilationContext>
@@ -43,6 +43,7 @@
     <PackageReference Include="Microsoft.AspNetCore.AzureAppServices.HostingStartup" Version="10.0.14" />
   </ItemGroup>
   <ItemGroup>
+    <Content Update="biome.json" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
     <Content Update="*.pfx" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(InstallWebPackages)' == '' and ('$(CI)' != '' or !Exists('$(MSBuildThisFileDirectory)\node_modules')) ">
@@ -50,7 +51,6 @@
   </PropertyGroup>
   <Target Name="InstallPackages" BeforeTargets="Build" Condition=" '$(InstallWebPackages)' == 'true' ">
     <Exec Command="npm ci" />
-    <Exec Command="npm run install" />
   </Target>
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
     <Exec Command="npm run build" />

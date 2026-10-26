@@ -8,8 +8,8 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <Nullable>enable</Nullable>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/justeattakeaway/ApplePayJSSample</PackageProjectUrl>
-    <PackageReleaseNotes>$(PackageProjectUrl)/releases</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/martincostello/ApplePayJSSample</PackageProjectUrl>
+    <PackageReleaseNotes></PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>applepay</PackageTags>
     <RepositoryType>git</RepositoryType>

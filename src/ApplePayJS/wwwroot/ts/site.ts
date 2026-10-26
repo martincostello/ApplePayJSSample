@@ -14,7 +14,7 @@ namespace justEat {
         private applePayVersion: number;
         private countryCode: string;
         private currencyCode: string;
-        private session: ApplePaySession;
+        private session!: ApplePaySession;
         private validationResource: string;
 
         /**
@@ -23,18 +23,18 @@ namespace justEat {
         public constructor() {
 
             // Get the merchant identifier and store display name from the page meta tags.
-            this.merchantIdentifier = $("meta[name='apple-pay-merchant-id']").attr("content");
-            this.storeName = $("meta[name='apple-pay-store-name']").attr("content");
+            this.merchantIdentifier = this.getMetaContent("apple-pay-merchant-id") ?? "";
+            this.storeName = this.getMetaContent("apple-pay-store-name") ?? "";
 
             // Get the URL to POST to for Apple Pay merchant validation
-            this.validationResource = $("link[rel='merchant-validation']").attr("href");
+            this.validationResource = document.querySelector<HTMLLinkElement>("link[rel='merchant-validation']")?.href ?? "";
 
             // Set the Apple Pay JS version to use
             this.applePayVersion = 10;
 
             // Set the appropriate ISO country and currency codes
-            this.countryCode = $("meta[name='payment-country-code']").attr("content") || "GB";
-            this.currencyCode = $("meta[name='payment-currency-code']").attr("content") || "GBP";
+            this.countryCode = this.getMetaContent("payment-country-code") || "GB";
+            this.currencyCode = this.getMetaContent("payment-currency-code") || "GBP";
         }
 
         /**
@@ -77,13 +77,13 @@ namespace justEat {
          * Handles the Apple Pay button being pressed.
          * @param e - The event object.
          */
-        private beginPayment = (e: JQueryEventObject): void => {
+        private beginPayment = (e: Event): void => {
 
             e.preventDefault();
 
             // Get the amount to request from the form and set up
             // the totals and line items for collection and delivery.
-            const subtotal = $("#amount").val().toString();
+            const subtotal = document.querySelector<HTMLInputElement>("#amount")?.value ?? "0";
             const delivery = "0.01";
             const deliveryTotal = (parseFloat(subtotal) + parseFloat(delivery)).toString(10);
 
@@ -118,8 +118,8 @@ namespace justEat {
             // Setup handler for shipping method selection.
             this.session.onshippingmethodselected = (event) => {
 
-                let newTotal;
-                let newLineItems;
+                let newTotal: ApplePayJS.ApplePayLineItem;
+                let newLineItems: ApplePayJS.ApplePayLineItem[];
 
                 // Swap the total and line items based on the selected shipping method
                 if (event.shippingMethod.identifier === "collection") {
@@ -187,7 +187,7 @@ namespace justEat {
          * @returns The Apple Pay payment request that was created.
          */
         private createPaymentRequest = (deliveryAmount: string, lineItems: ApplePayJS.ApplePayLineItem[], total: ApplePayJS.ApplePayLineItem): ApplePayJS.ApplePayPaymentRequest => {
-            let paymentRequest: ApplePayJS.ApplePayPaymentRequest = {
+            const paymentRequest: ApplePayJS.ApplePayPaymentRequest = {
                 applicationData: btoa("Custom application-specific data"),
                 countryCode: this.countryCode,
                 currencyCode: this.currencyCode,
@@ -220,20 +220,31 @@ namespace justEat {
         }
 
         /**
+         * Gets the content of the specified meta tag in the current page.
+         * @param name - The name of the meta tag.
+         * @returns The content of the meta tag, if found.
+         */
+        private getMetaContent(name: string): string | undefined {
+            return document.querySelector<HTMLMetaElement>(`meta[name='${name}']`)?.content;
+        }
+
+        /**
          * Gets the current page's language.
          * @returns The current page language.
          */
         private getPageLanguage(): string {
-            return $("html").attr("lang") || "en";
+            return document.documentElement.lang || "en";
         }
 
         /**
          * Hides the setup button.
          */
         private hideSetupButton(): void {
-            const button = $("#set-up-apple-pay-button");
-            button.addClass("d-none");
-            button.off("click");
+            const button = document.querySelector("#set-up-apple-pay-button");
+            if (button) {
+                button.classList.add("d-none");
+                button.removeEventListener("click", this.setupApplePay);
+            }
         }
 
         /**
@@ -257,17 +268,22 @@ namespace justEat {
                 const shippingContact = event.payment.shippingContact;
 
                 // Apply the details captured from the Apple Pay sheet to the page.
-                $(".card-name").text(event.payment.token.paymentMethod.displayName);
-                this.updatePanel($("#billing-contact"), billingContact);
-                this.updatePanel($("#shipping-contact"), shippingContact);
+                const cardName = document.querySelector(".card-name");
+                if (cardName) {
+                    cardName.textContent = event.payment.token.paymentMethod.displayName;
+                }
+
+                this.updatePanel(document.querySelector("#billing-contact"), billingContact);
+                this.updatePanel(document.querySelector("#shipping-contact"), shippingContact);
                 this.showSuccess();
             }
             else {
-                const errors = authorizationResult.errors.map((error) => {
+                const errors = authorizationResult.errors ?? [];
+                const messages = errors.map((error) => {
                     return error.message;
                 });
-                this.showError(`Your payment could not be processed. ${errors.join(" ")}`);
-                authorizationResult.errors.forEach((error) => {
+                this.showError(`Your payment could not be processed. ${messages.join(" ")}`);
+                errors.forEach((error) => {
                     console.error(`${error.message} (${error.contactField}: ${error.code}).`);
                 });
             }
@@ -291,27 +307,37 @@ namespace justEat {
 
             // Post the payload to the server to validate the
             // merchant session using the merchant certificate.
-            $.ajax(request).then((merchantSession) => {
-                // Complete validation by passing the merchant session to the Apple Pay session.
-                this.session.completeMerchantValidation(merchantSession);
-            });
+            fetch(this.validationResource, request)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`Merchant validation failed with HTTP status ${response.status}.`);
+                    }
+                    return response.json();
+                })
+                .then((merchantSession) => {
+                    // Complete validation by passing the merchant session to the Apple Pay session.
+                    this.session.completeMerchantValidation(merchantSession);
+                });
         }
 
         /**
          * Creates the HTTP headers to use for the validation request.
          * @returns An object representing the HTTP headers for the request.
          */
-        private createValidationHeaders(): any {
+        private createValidationHeaders(): Record<string, string> {
 
             // Set any custom HTTP request headers here.
-            let headers: any = {
+            const headers: Record<string, string> = {
+                "Content-Type": "application/json; charset=utf-8"
             };
 
             // Setup antiforgery HTTP header.
-            const antiforgeryHeader = $("meta[name='x-antiforgery-name']").attr("content");
-            const antiforgeryToken = $("meta[name='x-antiforgery-token']").attr("content");
+            const antiforgeryHeader = this.getMetaContent("x-antiforgery-name");
+            const antiforgeryToken = this.getMetaContent("x-antiforgery-token");
 
-            headers[antiforgeryHeader] = antiforgeryToken;
+            if (antiforgeryHeader && antiforgeryToken) {
+                headers[antiforgeryHeader] = antiforgeryToken;
+            }
 
             return headers;
         }
@@ -321,12 +347,10 @@ namespace justEat {
          * @param data - The request data.
          * @param headers - The request headers.
          */
-        private createValidationRequest = (data: any, headers: any): JQueryAjaxSettings => {
+        private createValidationRequest = (data: object, headers: HeadersInit): RequestInit => {
             return {
-                url: this.validationResource,
                 method: "POST",
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(data),
+                body: JSON.stringify(data),
                 headers: headers
             };
         }
@@ -345,7 +369,7 @@ namespace justEat {
                         this.showError("Failed to set up Apple Pay.");
                     }
                     return success;
-                }).catch((err: any) => {
+                }).catch((err: unknown) => {
                     this.showError(`Failed to set up Apple Pay. ${JSON.stringify(err)}`);
                     return false;
                 });
@@ -356,20 +380,23 @@ namespace justEat {
          */
         private showButton = (): void => {
 
-            const button = $("#apple-pay-button");
-            button.attr("lang", this.getPageLanguage());
-            button.on("click", this.beginPayment);
+            const button = document.querySelector<HTMLElement>("#apple-pay-button");
+
+            if (!button) {
+                return;
+            }
+
+            button.lang = this.getPageLanguage();
+            button.addEventListener("click", this.beginPayment);
 
             if (this.supportsSetup()) {
-                button.addClass("apple-pay-button-with-text");
-                button.addClass("apple-pay-button-black-with-text");
+                button.classList.add("apple-pay-button-with-text", "apple-pay-button-black-with-text");
             }
             else {
-                button.addClass("apple-pay-button");
-                button.addClass("apple-pay-button-black");
+                button.classList.add("apple-pay-button", "apple-pay-button-black");
             }
 
-            button.removeClass("d-none");
+            button.classList.remove("d-none");
         }
 
         /**
@@ -377,28 +404,31 @@ namespace justEat {
          * @param text - The text to show in the banner.
          */
         private showError(text: string): void {
-            const error = $(".apple-pay-error");
-            error.text(text);
-            error.removeClass("d-none");
+            const error = document.querySelector(".apple-pay-error");
+            if (error) {
+                error.textContent = text;
+                error.classList.remove("d-none");
+            }
         }
 
         /**
          * Shows the button to set up Apple Pay.
          */
         private showSetupButton = (): void => {
-            const button = $("#set-up-apple-pay-button");
-            button.attr("lang", this.getPageLanguage());
-            button.on("click", this.setupApplePay);
-            button.removeClass("d-none");
+            const button = document.querySelector<HTMLElement>("#set-up-apple-pay-button");
+            if (button) {
+                button.lang = this.getPageLanguage();
+                button.addEventListener("click", this.setupApplePay);
+                button.classList.remove("d-none");
+            }
         }
 
         /**
          * Shows the successful payment button.
          */
         private showSuccess() {
-            $(".apple-pay-intro").hide();
-            const success = $(".apple-pay-success");
-            success.removeClass("d-none");
+            document.querySelector(".apple-pay-intro")?.classList.add("d-none");
+            document.querySelector(".apple-pay-success")?.classList.remove("d-none");
         }
 
         /**
@@ -422,40 +452,65 @@ namespace justEat {
          * @param panel - The panel to update.
          * @param contact - The contact to update the panel with the details for.
          */
-        private updatePanel = (panel: JQuery, contact: ApplePayJS.ApplePayPaymentContact) => {
+        private updatePanel = (panel: Element | null, contact: ApplePayJS.ApplePayPaymentContact | undefined) => {
+
+            if (!panel || !contact) {
+                return;
+            }
 
             if (contact.emailAddress) {
-                panel.find(".contact-email")
-                    .text(contact.emailAddress)
-                    .attr("href", "mailto:" + contact.emailAddress)
-                    .append("<br/>")
-                    .removeClass("d-none");
+                this.showContactLine(panel, ".contact-email", contact.emailAddress, `mailto:${contact.emailAddress}`);
             }
 
             if (contact.phoneNumber) {
-                panel.find(".contact-telephone")
-                    .text(contact.phoneNumber)
-                    .attr("href", "tel:" + contact.phoneNumber)
-                    .append("<br/>")
-                    .removeClass("d-none");
+                this.showContactLine(panel, ".contact-telephone", contact.phoneNumber, `tel:${contact.phoneNumber}`);
             }
 
             if (contact.givenName) {
-                panel.find(".contact-name")
-                    .text(contact.givenName + " " + contact.familyName)
-                    .append("<br/>")
-                    .removeClass("d-none");
+                this.showContactLine(panel, ".contact-name", `${contact.givenName} ${contact.familyName}`);
             }
 
             if (contact.addressLines) {
-                panel.find(".contact-address-lines").text(contact.addressLines.join(", "));
-                panel.find(".contact-sub-locality").text(contact.subLocality);
-                panel.find(".contact-locality").text(contact.locality);
-                panel.find(".contact-sub-administrative-area").text(contact.subAdministrativeArea);
-                panel.find(".contact-administrative-area").text(contact.administrativeArea);
-                panel.find(".contact-postal-code").text(contact.postalCode);
-                panel.find(".contact-country").text(contact.country);
-                panel.find(".contact-address").removeClass("d-none");
+                this.setText(panel, ".contact-address-lines", contact.addressLines.join(", "));
+                this.setText(panel, ".contact-sub-locality", contact.subLocality);
+                this.setText(panel, ".contact-locality", contact.locality);
+                this.setText(panel, ".contact-sub-administrative-area", contact.subAdministrativeArea);
+                this.setText(panel, ".contact-administrative-area", contact.administrativeArea);
+                this.setText(panel, ".contact-postal-code", contact.postalCode);
+                this.setText(panel, ".contact-country", contact.country);
+                panel.querySelector(".contact-address")?.classList.remove("d-none");
+            }
+        }
+
+        /**
+         * Sets the text of the specified element within a panel.
+         * @param panel - The panel containing the element.
+         * @param selector - The selector for the element.
+         * @param text - The text to set.
+         */
+        private setText(panel: Element, selector: string, text: string | undefined): void {
+            const element = panel.querySelector(selector);
+            if (element) {
+                element.textContent = text ?? "";
+            }
+        }
+
+        /**
+         * Shows a line of contact details within a panel.
+         * @param panel - The panel containing the element.
+         * @param selector - The selector for the element.
+         * @param text - The text to display.
+         * @param href - The optional URL to link the element to.
+         */
+        private showContactLine(panel: Element, selector: string, text: string, href?: string): void {
+            const element = panel.querySelector(selector);
+            if (element) {
+                element.textContent = text;
+                if (href) {
+                    element.setAttribute("href", href);
+                }
+                element.append(document.createElement("br"));
+                element.classList.remove("d-none");
             }
         }
     }

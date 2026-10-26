@@ -23,7 +23,6 @@ src/ApplePayJS/*.pfx
 src/ApplePayJS/wwwroot/**/*.min.css
 src/ApplePayJS/wwwroot/**/*.min.js
 src/ApplePayJS/wwwroot/ts/*.js
-src/ApplePayJS/wwwroot/lib/*
 TestResults
 UpgradeLog*.htm
 UpgradeLog*.XML
