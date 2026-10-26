@@ -2,17 +2,14 @@
   "compileOnSave": true,
   "compilerOptions": {
     "inlineSourceMap": true,
-    "lib": [ "dom", "es6" ],
-    "module": "commonjs",
-    "noImplicitAny": true,
-    "noImplicitThis": true,
+    "lib": [ "dom", "es2022" ],
     "noEmitOnError": true,
     "removeComments": true,
-    "target": "es5"
+    "strict": true,
+    "target": "es2022",
+    "types": [ "applepayjs" ]
   },
-  "exclude": [
-    "bin",
-    "node_modules",
-    "obj"
+  "include": [
+    "wwwroot/ts/**/*.ts"
   ]
 }

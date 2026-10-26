@@ -62,21 +62,23 @@
 *@
 <div class="container">
     <div class="row">
-        <div class="card apple-pay-intro">
-            <div class="card-header">
-                <h1 class="h5">Apple Pay JS</h1>
-            </div>
-            <div class="card-body">
-                <p class="lead">
-                    This page demonstrates an integration of <a href="https://developer.apple.com/reference/applepayjs/" rel="noopener" target="_blank">Apple Pay JS</a>.
-                </p>
-                <p class="text-justify">
-                    If supported on the current device, you will be able to authorize a payment for the amount entered below.
-                </p>
-                <p class="text-justify">
-                    The Apple Pay token is not used once it is authorized, other than to print the details obtained from the Apple Pay sheet
-                    as a means of demonstrating that access to payment information was granted. You will <strong>not</strong> be charged.
-                </p>
+        <div class="col">
+            <div class="card apple-pay-intro">
+                <div class="card-header">
+                    <h1 class="h5">Apple Pay JS</h1>
+                </div>
+                <div class="card-body">
+                    <p class="lead">
+                        This page demonstrates an integration of <a href="https://developer.apple.com/reference/applepayjs/" rel="noopener" target="_blank">Apple Pay JS</a>.
+                    </p>
+                    <p>
+                        If supported on the current device, you will be able to authorize a payment for the amount entered below.
+                    </p>
+                    <p>
+                        The Apple Pay token is not used once it is authorized, other than to print the details obtained from the Apple Pay sheet
+                        as a means of demonstrating that access to payment information was granted. You will <strong>not</strong> be charged.
+                    </p>
+                </div>
             </div>
         </div>
     </div>
@@ -141,15 +143,13 @@
     </div>
     <div class="row mt-3">
         <form class="col">
-            <fieldset class="form-group">
-                <label class="sr-only" for="amount">Amount (in @currencyCode)</label>
+            <fieldset class="mb-3">
+                <label class="visually-hidden" for="amount">Amount (in @currencyCode)</label>
                 <div class="input-group input-group-lg">
                     @*
                         Add a number input for the amount to charge in the Apple Pay Sheet.
                     *@
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="amount-addon">@currencySymbol</span>
-                    </div>
+                    <span class="input-group-text" id="amount-addon">@currencySymbol</span>
                     <input type="number"
                            aria-describedby="amount-addon"
                            autocomplete="off"

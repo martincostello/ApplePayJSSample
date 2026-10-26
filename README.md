@@ -21,6 +21,7 @@ The key components to look at for the implementation are:
 * `src\ApplePayJS\Views\Home\Index.cshtml` - The view that renders the Apple Pay button.
 * `src\ApplePayJS\wwwroot\css\site.css` - The CSS used to style the Apple Pay button.
 * `src\ApplePayJS\wwwroot\js\site.js` - The JavaScript that performs the majority of the Apple Pay functionality.
+* `src\ApplePayJS\wwwroot\ts\site.ts` - A TypeScript equivalent of `site.js`, used if `ApplePay:UseTypeScript` is set to `true`.
 * `src\ApplePayJS\Controllers\HomeController.cs` - The controller that performs the POST to the Apple Pay service to verify a merchant session.
 
 ## Setup
@@ -30,7 +31,7 @@ To setup the repository to run the sample, perform the steps below:
   1. Install the latest [.NET SDK](https://www.microsoft.com/net/download/core), Visual Studio or Visual Studio Code.
   1. Fork this repository.
   1. Clone the repository from your fork to your local machine: `git clone https://github.com/{username}/ApplePayJSSample.git`
-  1. Restore the Bower, npm and NuGet packages.
+  1. Restore the npm and NuGet packages.
   1. [Follow the steps](https://developer.apple.com/reference/applepayjs#2193397) to obtain your Apple Pay Merchant ID, Payment Processing Certificate, Domain Verification file and Merchant Identity Certificate if you do not already have them.
   1. Place the Domain Verification file (`apple-developer-merchantid-domain-association`) in the `src\ApplePayJS\wwwroot\.well-known` folder.
   1. Generate a `.pfx` file from your Merchant Identity Certificate (`merchant_id.cer`, which is the public key) and the Certificate Signing Request (`your_file_name.csr`, which is the private key) that you used to generate it.
