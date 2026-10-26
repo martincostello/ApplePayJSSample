@@ -72,7 +72,7 @@ public class IntegrationTests(ITestOutputHelper outputHelper) : IAsyncLifetime
 
     private static void InstallPlaywright()
     {
-        int exitCode = Program.Main(["install"]);
+        int exitCode = Microsoft.Playwright.Program.Main(["install"]);
 
         if (exitCode != 0)
         {

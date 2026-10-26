@@ -1,8 +1,14 @@
 # Apple Pay JS Example Integration
 
-[![Build status](https://github.com/justeattakeaway/ApplePayJSSample/actions/workflows/build.yml/badge.svg?branch=main&event=push)](https://github.com/justeattakeaway/ApplePayJSSample/actions/workflows/build.yml?query=branch%3Amain+event%3Apush)
+[![Build status](https://github.com/martincostello/ApplePayJSSample/actions/workflows/build.yml/badge.svg?branch=main&event=push)](https://github.com/martincostello/ApplePayJSSample/actions/workflows/build.yml?query=branch%3Amain+event%3Apush)
 
-This repository contains a sample implementation of [Apple Pay JS](https://developer.apple.com/reference/applepayjs/) using ASP.NET Core 8 written in C# and JavaScript.
+This repository contains a sample implementation of [Apple Pay JS](https://developer.apple.com/reference/applepayjs/) using ASP.NET Core 10 written in C# and JavaScript.
+
+> [!NOTE]
+> This repository was originally created by Just Eat at
+> [justeattakeaway/ApplePayJSSample](https://github.com/justeattakeaway/ApplePayJSSample) which was archived in mid-2026.
+>
+> This repository is a fork maintained by the original author.
 
 ## Overview
 
@@ -21,7 +27,7 @@ The key components to look at for the implementation are:
 
 To setup the repository to run the sample, perform the steps below:
 
-  1. Install the latest [.NET 8 SDK](https://www.microsoft.com/net/download/core), Visual Studio 2022 or Visual Studio Code.
+  1. Install the latest [.NET SDK](https://www.microsoft.com/net/download/core), Visual Studio or Visual Studio Code.
   1. Fork this repository.
   1. Clone the repository from your fork to your local machine: `git clone https://github.com/{username}/ApplePayJSSample.git`
   1. Restore the Bower, npm and NuGet packages.
@@ -34,7 +40,7 @@ To setup the repository to run the sample, perform the steps below:
       * `ApplePay:StoreName`
       * `ApplePay:UseCertificateStore`
       * `ApplePay:MerchantCertificateThumbprint` or `ApplePay:MerchantCertificateFileName`
-  1. Configure the following setting in either your environment variables, your [user secrets](https://docs.asp.net/en/latest/security/app-secrets.html#secret-manager) or in `src\ApplePayJS\appsettings.json` (**not recommended**) if loading the `.pfx` file from disk (i.e. `ApplePay:UseCertificateStore=false`):
+  1. Configure the following setting in either your environment variables, your [user secrets](https://learn.microsoft.com/aspnet/core/security/app-secrets#secret-manager) or in `src\ApplePayJS\appsettings.json` (**not recommended**) if loading the `.pfx` file from disk (i.e. `ApplePay:UseCertificateStore=false`):
       * `ApplePay:MerchantCertificatePassword`
   1. Deploy the application to the hosting environment for the domain where you wish to use Apple Pay JS.
   1. Verify the domain in the [Apple Developer Portal](https://developer.apple.com/account/).
@@ -43,7 +49,7 @@ You should now be able to perform Apple Pay JS transactions on the deployed appl
 
 ## Local Debugging
 
-You should be able to debug the application in [Visual Studio Code](https://code.visualstudio.com/) or [Visual Studio 2022](https://www.visualstudio.com/downloads/).
+You should be able to debug the application in [Visual Studio Code](https://code.visualstudio.com/) or [Visual Studio](https://www.visualstudio.com/downloads/).
 
 ## Azure App Service Deployment
 
@@ -60,11 +66,11 @@ If you are deploying the sample application to a Microsoft Azure App Service Web
 
 ## Feedback
 
-Any feedback or issues can be added to the [issues](https://github.com/justeattakeaway/ApplePayJSSample/issues) for this project in GitHub.
+Any feedback or issues can be added to the [issues](https://github.com/martincostello/ApplePayJSSample/issues) for this project in GitHub.
 
 ## License
 
-This project is licensed under the [Apache 2.0](https://github.com/justeattakeaway/ApplePayJSSample/blob/main/LICENSE) license.
+This project is licensed under the [Apache 2.0](https://github.com/martincostello/ApplePayJSSample/blob/main/LICENSE) license.
 
 ## External Links
 
