@@ -20,7 +20,7 @@ if ($OutputPath -eq "") {
 $installDotNetSdk = $false;
 
 if (($null -eq (Get-Command "dotnet" -ErrorAction SilentlyContinue)) -and ($null -eq (Get-Command "dotnet.exe" -ErrorAction SilentlyContinue))) {
-    Write-Host "The .NET SDK is not installed."
+    Write-Output "The .NET SDK is not installed."
     $installDotNetSdk = $true
 }
 else {
@@ -32,7 +32,7 @@ else {
     }
 
     if ($installedDotNetVersion -ne $dotnetVersion) {
-        Write-Host "The required version of the .NET SDK is not installed. Expected $dotnetVersion."
+        Write-Output "The required version of the .NET SDK is not installed. Expected $dotnetVersion."
         $installDotNetSdk = $true
     }
 }
@@ -70,7 +70,7 @@ if (![string]::IsNullOrEmpty($Runtime)) {
     $additionalArgs += $Runtime
 }
 
-Write-Host "Publishing application..." -ForegroundColor Green
+Write-Output "Publishing application..." -ForegroundColor Green
 & $dotnet publish (Join-Path $solutionPath "src" "ApplePayJS" "ApplePayJS.csproj") --output $OutputPath $additionalArgs
 
 $additionalArgs = @()
@@ -82,7 +82,7 @@ if (![string]::IsNullOrEmpty($env:GITHUB_SHA)) {
 }
 
 if ($SkipTests -eq $false) {
-    Write-Host "Running tests..." -ForegroundColor Green
+    Write-Output "Running tests..." -ForegroundColor Green
     & $dotnet test (Join-Path $solutionPath "tests" "ApplePayJS.Tests" "ApplePayJS.Tests.csproj") --configuration "Release" $additionalArgs
 }
 
