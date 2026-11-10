@@ -1,9 +1,9 @@
 {
   "name": "justeatapplepayjs",
   "private": true,
-  "version": "10.0.0",
+  "version": "11.0.0",
   "devDependencies": {
-    "@biomejs/biome": "2.6.2",
+    "@biomejs/biome": "2.6.6",
     "@types/applepayjs": "14.0.9",
     "typescript": "7.0.2"
   },
