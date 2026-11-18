@@ -35,14 +35,14 @@ jobs:
     steps:
 
     - name: Checkout code
-      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      uses: actions/checkout@v7.0.1
       with:
         filter: 'tree:0'
         persist-credentials: false
         show-progress: false
 
     - name: Setup .NET SDK
-      uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
+      uses: actions/setup-dotnet@v6.1.0
 
     - name: Build and publish
       shell: pwsh
@@ -51,7 +51,7 @@ jobs:
       run: ./build.ps1 -SkipTests
 
     - name: Azure log in
-      uses: azure/login@532459ea530d8321f2fb9bb10d1e0bcf23869a43 # v3.0.0
+      uses: azure/login@v3.1.0
       if: env.PUBLISH_CONTAINER == 'true'
       with:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
@@ -91,14 +91,14 @@ jobs:
     steps:
 
     - name: Azure log in
-      uses: azure/login@532459ea530d8321f2fb9bb10d1e0bcf23869a43 # v3.0.0
+      uses: azure/login@v3.1.0
       with:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - name: Deploy to Azure App Service
-      uses: azure/webapps-deploy@02a81bead70021f5284939794bcec79c271ab383 # v3.0.8
+      uses: azure/webapps-deploy@v3.0.8
       with:
         app-name: ${{ vars.AZURE_WEBAPP_NAME }}
         images: ${{ needs.build.outputs.container-tag }}
